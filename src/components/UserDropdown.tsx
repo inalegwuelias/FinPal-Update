@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { User, ChevronDown, LogOut, UserCircle, Mail, Lock } from 'lucide-react';
+import { User, ChevronDown, LogOut, CircleUser as UserCircle, Mail, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
