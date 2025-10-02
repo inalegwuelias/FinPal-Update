@@ -1,5 +1,6 @@
 import React from 'react';
-import { DollarSign, Calculator, MessageCircle, BookOpen, Home, BarChart3, Target } from 'lucide-react';
+import { DollarSign, Calculator, MessageCircle, BookOpen, Home, BarChart3, Target, User, ChevronDown } from 'lucide-react';
+import UserDropdown from './UserDropdown';
 
 interface HeaderProps {
   activeSection: string;
@@ -51,6 +52,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => {
           </nav>
 
           <div className="md:hidden flex space-x-2">
+            <UserDropdown onNavigate={onNavigate} />
             {navItems.map(({ id, icon: Icon }) => (
               <button
                 key={id}
@@ -64,6 +66,10 @@ const Header: React.FC<HeaderProps> = ({ activeSection, onNavigate }) => {
                 <Icon className="w-5 h-5" />
               </button>
             ))}
+          </div>
+
+          <div className="hidden md:block">
+            <UserDropdown onNavigate={onNavigate} />
           </div>
         </div>
       </div>
