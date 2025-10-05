@@ -423,14 +423,14 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onNavigate }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center p-4"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-center items-start min-h-screen p-4 overflow-y-auto"
             onClick={closeModals}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="glass-effect p-8 rounded-2xl border border-gray-100/50 w-full max-w-md mt-20"
+              className="glass-effect p-8 rounded-2xl border border-gray-100/50 w-full max-w-md my-8 mx-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Welcome Back</h2>
@@ -514,14 +514,14 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onNavigate }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center p-4"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-center items-start min-h-screen p-4 overflow-y-auto"
             onClick={closeModals}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="glass-effect p-8 rounded-2xl border border-gray-100/50 w-full max-w-md mt-10"
+              className="glass-effect p-8 rounded-2xl border border-gray-100/50 w-full max-w-md my-8 mx-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Join FinPal</h2>
@@ -640,14 +640,14 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onNavigate }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-center items-start min-h-screen p-4 overflow-y-auto"
             onClick={closeModals}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="glass-effect p-8 rounded-2xl border border-gray-100/50 w-full max-w-md text-center"
+              className="glass-effect p-8 rounded-2xl border border-gray-100/50 w-full max-w-md my-8 mx-auto text-center"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
