@@ -42,6 +42,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onNavigate }) => {
     fullName: '', 
     username: '' 
   });
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [usernameCheckTimeout, setUsernameCheckTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Session timeout constants (in milliseconds)
   const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
@@ -178,19 +180,45 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onNavigate }) => {
     }
   };
 
-  const checkUsernameAvailable = async (username: string): Promise<boolean> => {
+  const checkUsernameExists = async (username: string): Promise<boolean> => {
     try {
       const { data, error } = await supabase
-        .rpc('check_username_available', { username_to_check: username });
+        .from('profiles')
+        .select('username')
+        .eq('username', username)
+        .maybeSingle();
       
       if (error) throw error;
-      return data;
+      return data !== null; // Returns true if username exists (taken)
     } catch (error) {
       console.error('Error checking username:', error);
-      return false;
+      return false; // Assume available on error
     }
   };
 
+  const handleUsernameChange = (newUsername: string) => {
+    const cleanUsername = newUsername.toLowerCase().replace(/[^a-z0-9_]/g, '');
+    setSignupForm({ ...signupForm, username: cleanUsername });
+    
+    // Clear existing timeout
+    if (usernameCheckTimeout) {
+      clearTimeout(usernameCheckTimeout);
+    }
+    
+    if (cleanUsername.length >= 3) {
+      setUsernameStatus('checking');
+      
+      // Set new timeout for username check
+      const timeout = setTimeout(async () => {
+        const exists = await checkUsernameExists(cleanUsername);
+        setUsernameStatus(exists ? 'taken' : 'available');
+      }, 500); // Check after 500ms of no typing
+      
+      setUsernameCheckTimeout(timeout);
+    } else {
+      setUsernameStatus('idle');
+    }
+  };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -231,9 +259,9 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onNavigate }) => {
     setError(null);
 
     try {
-      // Check if username is available
-      const isUsernameAvailable = await checkUsernameAvailable(signupForm.username);
-      if (!isUsernameAvailable) {
+      // Check if username is taken before proceeding
+      const usernameExists = await checkUsernameExists(signupForm.username);
+      if (usernameExists) {
         setError('Username is already taken. Please choose another one.');
         setLoading(false);
         return;
@@ -273,6 +301,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onNavigate }) => {
       setShowSignupModal(false);
       setShowVerificationMessage(true);
       setSignupForm({ email: '', password: '', fullName: '', username: '' });
+      setUsernameStatus('idle');
       setIsDropdownOpen(false);
       setResendCountdown(20);
     } catch (error) {
@@ -321,6 +350,11 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onNavigate }) => {
     setError(null);
     setLoginForm({ email: '', password: '' });
     setSignupForm({ email: '', password: '', fullName: '', username: '' });
+    setUsernameStatus('idle');
+    if (usernameCheckTimeout) {
+      clearTimeout(usernameCheckTimeout);
+      setUsernameCheckTimeout(null);
+    }
   };
 
   const formatCountdown = (seconds: number) => {
@@ -556,14 +590,29 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onNavigate }) => {
                   <input
                     type="text"
                     value={signupForm.username}
-                    onChange={(e) => setSignupForm({ ...signupForm, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
+                    onChange={(e) => handleUsernameChange(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="johndoe"
                     required
                     minLength={3}
                     maxLength={20}
                   />
-                  <p className="text-xs text-gray-500 mt-1">3-20 characters, letters, numbers, and underscores only</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <p className="text-xs text-gray-500">3-20 characters, letters, numbers, and underscores only</p>
+                    {signupForm.username.length >= 3 && (
+                      <div className="text-xs">
+                        {usernameStatus === 'checking' && (
+                          <span className="text-blue-600">Checking...</span>
+                        )}
+                        {usernameStatus === 'available' && (
+                          <span className="text-green-600">✓ Available</span>
+                        )}
+                        {usernameStatus === 'taken' && (
+                          <span className="text-red-600">✗ Taken</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -608,7 +657,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onNavigate }) => {
                   </button>
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || usernameStatus === 'taken' || usernameStatus === 'checking'}
                     className="flex-1 btn-primary"
                   >
                     {loading ? 'Creating account...' : 'Sign Up'}
