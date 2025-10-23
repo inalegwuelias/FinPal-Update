@@ -1,8 +1,12 @@
 {
   "name": "vite-react-typescript-starter",
   "compatibility_date": "2025-10-23",
+  "main": "_worker.js",
   "assets": {
     "directory": "./dist"
+  },
+  "build": {
+    "command": "npm run build"
   }
 }
 
