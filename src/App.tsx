@@ -9,6 +9,7 @@ import EducationHub from './components/EducationHub';
 import Dashboard from './components/Dashboard';
 import GoalTracker from './components/GoalTracker';
 import Footer from './components/Footer';
+import FeedbackButton from './components/FeedbackButton';
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
@@ -52,6 +53,7 @@ function App() {
         </AnimatePresence>
       </main>
       <Footer />
+      <FeedbackButton />
     </div>
   );
 }
